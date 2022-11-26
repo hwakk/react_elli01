@@ -1,39 +1,51 @@
-import React, { useState } from "react";
+import React from "react";
+import { useImmer } from "use-immer";
 
 function AppMentors(props) {
-  const [person, setPerson] = useState(initialPerson);
+  const [person, updatePerson] = useImmer(initialPerson);
 
   const handleUpdate = () => {
     const prev = prompt(`누구의 이름을 바꾸고 싶은가요?`);
     const current = prompt(`이름을 무엇으로 바꾸고 싶은가요?`);
-    setPerson((person) => ({
-      ...person,
-      mentors: person.mentors.map((mentor) => {
-        if (mentor.name === prev) {
-          return { ...mentor, name: current };
-        }
-        return mentor;
-      }),
-    }));
+    // setPerson((person) => ({
+    //   ...person,
+    //   mentors: person.mentors.map((mentor) => {
+    //     if (mentor.name === prev) {
+    //       return { ...mentor, name: current };
+    //     }
+    //     return mentor;
+    //   }),
+    // }));
+    updatePerson((person) => {
+      const mentor = person.mentors.find((m) => m.name === prev);
+      mentor.name = current;
+    });
   };
 
   const handleAdd = () => {
     const name = prompt(`추가할 멘토 이름을 적어주세요`);
     const title = prompt(`추가할 멘토의 직업을 적어주세요`);
-    setPerson((person) => ({
-      ...person,
-      mentors: [...person.mentors, { name: name, title: title }],
-    }));
+    // setPerson((person) => ({
+    //   ...person,
+    //   mentors: [...person.mentors, { name: name, title: title }],
+    // }));
+    updatePerson((person) => {
+      person.mentors.push({ name: name, title: title });
+    });
   };
 
   const handleDelete = () => {
     const name = prompt(`삭제할 멘토 이름을 적어주세요`);
-    setPerson((person) => ({
-      ...person,
-      mentors: person.mentors.filter((mentor) => {
-        return mentor.name !== name;
-      }),
-    }));
+    // setPerson((person) => ({
+    //   ...person,
+    //   mentors: person.mentors.filter((mentor) => {
+    //     return mentor.name !== name;
+    //   }),
+    // }));
+    updatePerson((person) => {
+      const index = person.mentors.findIndex((m) => m.name === name);
+      person.mentors.splice(index, 1);
+    });
   };
 
   return (
